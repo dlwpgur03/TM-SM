@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     "/Users/leejehyuk/Desktop/VSCode/2025/학교/보안자료구조/test"
+relocations:     []
+...
