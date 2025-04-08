@@ -64,6 +64,16 @@ int compareSparse(Sparse a[MAX_SIZE], int aSize, Sparse b[MAX_SIZE], int bSize) 
     return 1;
 }
 
+// 💡 희소 행렬을 직접 전치시키기
+int transposeSparse(Sparse input[MAX_SIZE], int size, Sparse output[MAX_SIZE]) {
+    for (int i = 0; i < size; i++) {
+        output[i].row = input[i].col;   // 행 <-> 열 교환
+        output[i].col = input[i].row;
+        output[i].value = input[i].value;
+    }
+    return size;
+}
+
 int main() {
     int rows, cols;
     int matrix[MAX_SIZE][MAX_SIZE], transposed[MAX_SIZE][MAX_SIZE];
@@ -103,8 +113,8 @@ int main() {
     printf("\n4. 전치 행렬의 희소 표현:\n");
     printSparse(sparse2, sparse2Size);
 
-    // 5. 💡 전치 희소 행렬을 따로 또 만들기 (사실 4와 동일)
-    sparse3Size = convertToSparse(transposed, cols, rows, sparse3);
+    // 5. 💡 희소 행렬을 직접 전치시키기
+    sparse3Size = transposeSparse(sparse1, sparse1Size, sparse3);
     printf("\n5. 희소 행렬의 전치:\n");
     printSparse(sparse3, sparse3Size);
 
