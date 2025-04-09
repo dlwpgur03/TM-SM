@@ -2,124 +2,131 @@
 
 int main()
 {
-    // 행렬 크기와 반복문을 위한 변수 선언
-    int row, col; // 행렬 A의 행과 열 개수
-    int i, j;     // 반복문 변수
 
-    // 1. 행렬 크기와 행렬 A 입력
-    printf("행과 열을 입력하세요: "); // 입력 요청 메시지
-    scanf("%d %d", &row, &col);       // 행과 열 입력 받기
+    int row, col;
+    int i, j;
 
-    int a[row][col];                  // 행렬 A 선언
-    printf("행렬 A를 입력하세요:\n"); // 행렬 입력 요청 메시지
-    for (i = 0; i < row; i++)         // 행 반복
-        for (j = 0; j < col; j++)     // 열 반복
-            scanf("%d", &a[i][j]);    // 행렬 요소 입력
-
-    // 2. 행렬 A 출력
-    printf("\n[행렬 A 출력]\n"); // 출력 제목
-    for (i = 0; i < row; i++)    // 행 반복
+    // 행렬 입력
+    printf("행과 열을 입력하시오.(최대 10씩)");
+    if (scanf("%d %d", &row, &col) != 2 || row <= 0 || col <= 0 || row > 10 || col > 10)
     {
-        for (j = 0; j < col; j++)    // 열 반복
-            printf("%3d ", a[i][j]); // 요소 출력 (간격 조정 포함)
-        printf("\n");                // 다음 행으로 이동
+        printf("잘못된 입력입니다. 1 x 1 ~ 10 x 10 사이의 값을 입력하시오.\n");
+        return 1;
     }
 
-    // 3. 행렬 A의 전치 행렬 생성
-    int at[col][row];             // 전치 행렬 A^T 선언
-    for (i = 0; i < row; i++)     // 행렬 A의 행 반복
-        for (j = 0; j < col; j++) // 행렬 A의 열 반복
-            at[j][i] = a[i][j];   // 전치된 요소 할당
+    // 행렬 (N x N)입력
+    int A[10][10];
+    printf("행렬 A를 입력하시오.(%d x %d)\n", row, col);
+    for (i = 0; i < row; i++)
+        for (j = 0; j < col; j++)
+            scanf("%d", &A[i][j]);
 
-    printf("\n[전치 행렬 A^T 출력]\n"); // 출력 제목
-    for (i = 0; i < col; i++)           // 전치 행렬의 행 반복
+    // 행렬 (N x N)출력
+    printf("\n[행렬 A 출력]\n");
+    for (i = 0; i < row; i++)
     {
-        for (j = 0; j < row; j++)     // 전치 행렬의 열 반복
-            printf("%3d ", at[i][j]); // 요소 출력 (간격 조정 포함)
-        printf("\n");                 // 다음 행으로 이동
+        for (j = 0; j < col; j++)
+            printf("%10d", A[i][j]);
+        printf("\n");
     }
 
-    // 4. 행렬 A 희소화
-    int sparseA[row * col][3];    // 희소 행렬 표현 선언
-    int countA = 0;               // 0이 아닌 요소 개수 초기화
-    for (i = 0; i < row; i++)     // 행렬 A의 행 반복
-        for (j = 0; j < col; j++) // 행렬 A의 열 반복
-            if (a[i][j] != 0)     // 0이 아닌 요소 확인
+    // 행렬 -> 전치행렬
+    int At[10][10];
+    for (i = 0; i < row; i++)
+        for (j = 0; j < col; j++)
+            At[j][i] = A[i][j];
+
+    // 전치행렬 출력
+    printf("\n[전치행렬 At 출력]\n");
+    for (i = 0; i < col; i++)
+    {
+        for (j = 0; j < row; j++)
+            printf("%10d", At[i][j]);
+        printf("\n");
+    }
+
+    // 행렬 -> 희소행렬
+    int smA[100][3];
+    int count_smA = 0;
+    for (i = 0; i < row; i++)
+        for (j = 0; j < col; j++)
+            if (A[i][j] != 0)
             {
-                sparseA[countA][0] = i;       // 행 인덱스 저장
-                sparseA[countA][1] = j;       // 열 인덱스 저장
-                sparseA[countA][2] = a[i][j]; // 값 저장
-                countA++;                     // 개수 증가
+                smA[count_smA][0] = i;
+                smA[count_smA][1] = j;
+                smA[count_smA][2] = A[i][j];
+                count_smA++;
             }
 
-    printf("\n[희소 행렬 A 출력]\n");                                          // 출력 제목
-    for (i = 0; i < countA; i++)                                               // 희소 행렬 반복
-        printf("(%d, %d, %d)\n", sparseA[i][0], sparseA[i][1], sparseA[i][2]); // 행, 열, 값 출력
+    // 희소행렬 출력
+    printf("\n[희소행렬 smA 출력]\n");
+    for (i = 0; i < count_smA; i++)
+        printf("([%d, %d] - %d)\n", smA[i][0], smA[i][1], smA[i][2]);
 
-    // 5. 전치 행렬 A^T 희소화
-    int sparseAT[row * col][3];   // 전치 행렬 희소 표현 선언
-    int countAT = 0;              // 전치 행렬의 0이 아닌 요소 개수 초기화
-    for (i = 0; i < col; i++)     // 전치 행렬의 행 반복
-        for (j = 0; j < row; j++) // 전치 행렬의 열 반복
-            if (at[i][j] != 0)    // 0이 아닌 요소 확인
+    // 전치행렬 -> 희소행렬
+    int sm_At[100][3];
+    int count_At = 0;
+    for (i = 0; i < col; i++)
+        for (j = 0; j < row; j++)
+            if (At[i][j] != 0)
             {
-                sparseAT[countAT][0] = i;        // 행 인덱스 저장
-                sparseAT[countAT][1] = j;        // 열 인덱스 저장
-                sparseAT[countAT][2] = at[i][j]; // 값 저장
-                countAT++;                       // 개수 증가
+                sm_At[count_At][0] = i;
+                sm_At[count_At][1] = j;
+                sm_At[count_At][2] = At[i][j];
+                count_At++;
             }
 
-    printf("\n[전치 후 희소 행렬 출력]\n");                                       // 출력 제목
-    for (i = 0; i < countAT; i++)                                                 // 희소 행렬 반복
-        printf("(%d, %d, %d)\n", sparseAT[i][0], sparseAT[i][1], sparseAT[i][2]); // 행, 열, 값 출력
+    // 전치행렬 -> 희소행렬 출력
+    printf("\n[전치 후 희소행렬 sm_At 출력]\n");
+    for (i = 0; i < count_At; i++)
+        printf("([%d, %d] - %d)\n", sm_At[i][0], sm_At[i][1], sm_At[i][2]);
 
-    // 6. 희소 행렬 A의 전치
-    int transSparseA[row * col][3]; // 희소 행렬 전치 선언
-    for (i = 0; i < countA; i++)    // 희소 행렬 반복
+    // 희소행렬 -> 전치행렬
+    int smA_t[100][3];
+    for (i = 0; i < count_smA; i++)
     {
-        transSparseA[i][0] = sparseA[i][1]; // 행과 열 인덱스 교환
-        transSparseA[i][1] = sparseA[i][0];
-        transSparseA[i][2] = sparseA[i][2]; // 값 유지
+        smA_t[i][0] = smA[i][1];
+        smA_t[i][1] = smA[i][0];
+        smA_t[i][2] = smA[i][2];
     }
 
-    printf("\n[희소 후 전치 행렬 출력]\n");                                                   // 출력 제목
-    for (i = 0; i < countA; i++)                                                              // 희소 전치 행렬 반복
-        printf("(%d, %d, %d)\n", transSparseA[i][0], transSparseA[i][1], transSparseA[i][2]); // 행, 열, 값 출력
+    // 희소행렬 -> 전치행렬 출력
+    printf("\n[희소 후 전치행렬 smA_t 출력]\n");
+    for (i = 0; i < count_smA; i++)
+        printf("([%d, %d] - %d)\n", smA_t[i][0], smA_t[i][1], smA_t[i][2]);
 
-    // 7. 두 희소 전치 결과 비교
-    int same = 1;          // 두 전치 결과가 같은지 여부를 나타내는 플래그
-    if (countA != countAT) // 개수가 다른지 확인
+    // sm_At와 smA_t 결과 비교
+    int comp = 1;
+    if (count_smA != count_At)
     {
-        same = 0; // 플래그를 false로 설정
+        comp = 0;
     }
     else
     {
-        for (i = 0; i < countA; i++) // 첫 번째 희소 전치 반복
+        for (i = 0; i < count_smA; i++)
         {
-            int found = 0;                // 요소가 발견되었는지 확인하는 플래그
-            for (j = 0; j < countAT; j++) // 두 번째 희소 전치 반복
+            int same = 0;
+            for (j = 0; j < count_At; j++)
             {
-                if (transSparseA[i][0] == sparseAT[j][0] && // 행 인덱스 비교
-                    transSparseA[i][1] == sparseAT[j][1] && // 열 인덱스 비교
-                    transSparseA[i][2] == sparseAT[j][2])   // 값 비교
+                if (smA_t[i][0] == sm_At[j][0] && smA_t[i][1] == sm_At[j][1] && smA_t[i][2] == sm_At[j][2])
                 {
-                    found = 1; // 요소 발견
+                    same = 1;
                     break;
                 }
             }
-            if (!found) // 요소가 발견되지 않으면 플래그를 false로 설정
+            if (!same)
             {
-                same = 0;
+                comp = 0;
                 break;
             }
         }
     }
 
-    printf("\n[비교 결과]\n"); // 비교 결과 출력
-    if (same)
-        printf("같습니다.\n"); // 희소 전치 결과가 같으면 출력
+    // 비교 결과 출력
+    printf("\n[비교 결과]\n");
+    if (comp)
+        printf("비교 결과 일치합니다.\n");
     else
-        printf("다릅니다.\n"); // 희소 전치 결과가 다르면 출력
-
-    return 0; // 프로그램 종료
+        printf("비교 결과 다릅니다.\n");
+    return 0;
 }
